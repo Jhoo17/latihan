@@ -74,19 +74,14 @@ export function MainNav() {
       ]
     },
     {
-      href: "/publications",
-      label: "Publications",
-      icon: BookOpen
-    },
-    {
       href: "/map",
       label: "Interactive Map",
       icon: MapPin
     },
     {
       href: "/blog",
-      label: "Blog",
-      icon: Newspaper
+      label: "Blog & Publications",
+      icon: BookOpen
     },
     {
       href: "/contact",
@@ -107,7 +102,7 @@ export function MainNav() {
               {route.children ? (
                 <>
                   <Link href={route.href}>
-                    <NavigationMenuTrigger className="flex items-center gap-2 px-4" indicator={false}>
+                    <NavigationMenuTrigger className="flex items-center gap-2 px-4">
                       <route.icon className="h-4 w-4" />
                       {route.label}
                     </NavigationMenuTrigger>

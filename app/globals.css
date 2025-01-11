@@ -76,3 +76,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+[data-active="true"] {
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+
+.ProseMirror:focus {
+  outline: none;
+}

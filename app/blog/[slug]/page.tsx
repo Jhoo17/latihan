@@ -72,7 +72,23 @@ export default async function PostPage({ params }: { params: { slug: string } })
       </div>
 
       <div className="prose prose-slate max-w-none">
-        {documentToReactComponents(fields.body)}
+        {documentToReactComponents(fields.body, {
+          renderNode: {
+            paragraph: (node, children) => <p className="mb-4">{children}</p>,
+            'embedded-asset-block': (node) => (
+              <img
+                src={node.data?.target?.fields?.file?.url}
+                alt={node.data?.target?.fields?.description || ''}
+                className="my-8 rounded-lg shadow-lg"
+              />
+            ),
+          },
+          renderMark: {
+            bold: (text) => <strong>{text}</strong>,
+            italic: (text) => <em>{text}</em>,
+            underline: (text) => <u>{text}</u>,
+          },
+        })}
       </div>
     </div>
   )

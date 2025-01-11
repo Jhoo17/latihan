@@ -12,18 +12,22 @@ import {
 
 export default async function AdminPage() {
   const session = await auth()
+  const ALLOWED_ROLES = ['ADMIN', 'GDA_USER']
 
   if (!session) {
     redirect("/login")
   }
 
-  if (session.user?.role !== "ADMIN") {
+  if (!ALLOWED_ROLES.includes(session.user?.role)) {
     redirect("/")
   }
 
+  // Only show certain admin features based on role
+  const isAdmin = session.user?.role === 'ADMIN'
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
       <p className="text-gray-600 mb-8">Welcome, {session.user?.name}!</p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,29 +43,33 @@ export default async function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Users</CardTitle>
-            <CardDescription>Manage user accounts</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild>
-              <Link href="/admin/users">Manage Users</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        {isAdmin && (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Users</CardTitle>
+                <CardDescription>Manage user accounts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/users">Manage Users</Link>
+                </Button>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Settings</CardTitle>
-            <CardDescription>Configure site settings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild>
-              <Link href="/admin/settings">Site Settings</Link>
-            </Button>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Settings</CardTitle>
+                <CardDescription>Configure site settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild>
+                  <Link href="/admin/settings">Site Settings</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
     </div>
   )

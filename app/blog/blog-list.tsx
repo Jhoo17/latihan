@@ -86,7 +86,7 @@ export default function BlogList({ posts }: { posts: Entry<Post>[] }) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">GeoConsult Blog & Publications</h1>
+        <h1 className="text-4xl font-bold mb-4">Blog & Publications</h1>
         <p className="text-lg text-muted-foreground mb-6">
           Explore our latest geological insights, research papers, and industry updates
         </p>

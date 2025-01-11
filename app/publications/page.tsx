@@ -27,7 +27,7 @@ const publications: Publication[] = [
 export default function PublicationsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">GeoConsult Publications</h1>
+      <h1 className="text-3xl font-bold mb-8">Publications</h1>
       <div className="space-y-6">
         {publications.map((pub) => (
           <Card key={pub.id}>

@@ -34,7 +34,6 @@ export default function Page() {
       <header className="fixed top-0 w-full z-50 bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex justify-between items-center">
-            <div className="text-2xl font-bold text-gray-800">GeoConsult</div>
             <div className="hidden md:flex space-x-8">
               <a href="#home" className="text-gray-600 hover:text-gray-800 transition-colors">Home</a>
               <a href="#services" className="text-gray-600 hover:text-gray-800 transition-colors">Services</a>
@@ -130,7 +129,7 @@ export default function Page() {
             <div className="md:w-1/2 md:pl-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">Our Story</h2>
               <p className="text-gray-600 mb-6">
-                With over two decades of experience, GeoConsult has been at the forefront of geological consulting. Our team of expert geologists and environmental scientists is dedicated to providing cutting-edge solutions for complex geological challenges.
+                With over two decades of experience, GDA Consulting has been at the forefront of geological consulting. Our team of expert geologists and environmental scientists is dedicated to providing cutting-edge solutions for complex geological challenges.
               </p>
               <p className="text-gray-600 mb-6">
                 We believe in the power of knowledge and innovation to drive sustainable resource management and informed decision-making in the fields of mining, environmental conservation, and urban development.
@@ -320,7 +319,7 @@ export default function Page() {
             </div>
           </div>
           <div className="mt-8 border-t border-gray-700 pt-8 text-center">
-            <p className="text-sm text-gray-400">&copy; 2023 GeoConsult. All rights reserved.</p>
+            <p className="text-sm text-gray-400">&copy; 2023 GDA Consulting. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -74,19 +74,48 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <div className="prose prose-slate max-w-none">
         {documentToReactComponents(fields.body, {
           renderNode: {
-            paragraph: (node, children) => <p className="mb-4">{children}</p>,
+            paragraph: (node, children) => (
+              <p className="mb-4 leading-relaxed">{children}</p>
+            ),
+            'heading-1': (node, children) => (
+              <h1 className="text-3xl font-bold mt-8 mb-4">{children}</h1>
+            ),
+            'heading-2': (node, children) => (
+              <h2 className="text-2xl font-bold mt-6 mb-3">{children}</h2>
+            ),
+            'heading-3': (node, children) => (
+              <h3 className="text-xl font-bold mt-5 mb-2">{children}</h3>
+            ),
+            'unordered-list': (node, children) => (
+              <ul className="list-disc pl-6 mb-4">{children}</ul>
+            ),
+            'ordered-list': (node, children) => (
+              <ol className="list-decimal pl-6 mb-4">{children}</ol>
+            ),
+            'list-item': (node, children) => (
+              <li className="mb-1">{children}</li>
+            ),
+            'blockquote': (node, children) => (
+              <blockquote className="border-l-4 border-gray-300 pl-4 italic my-4">{children}</blockquote>
+            ),
             'embedded-asset-block': (node) => (
               <img
                 src={node.data?.target?.fields?.file?.url}
                 alt={node.data?.target?.fields?.description || ''}
-                className="my-8 rounded-lg shadow-lg"
+                className="my-8 rounded-lg shadow-lg max-w-full h-auto"
               />
+            ),
+            hyperlink: (node, children) => (
+              <a href={node.data.uri} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+                {children}
+              </a>
             ),
           },
           renderMark: {
-            bold: (text) => <strong>{text}</strong>,
-            italic: (text) => <em>{text}</em>,
+            bold: (text) => <strong className="font-bold">{text}</strong>,
+            italic: (text) => <em className="italic">{text}</em>,
             underline: (text) => <u>{text}</u>,
+            code: (text) => <code className="bg-gray-100 rounded px-1 py-0.5">{text}</code>,
           },
         })}
       </div>

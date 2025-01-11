@@ -25,6 +25,22 @@ export default function CreatePostPage() {
     tags: []
   })
 
+  const formatSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/\s+/g, '-')    // Replace spaces with -
+      .replace(/[^a-z0-9-]+/g, '') // Only allow letters, numbers, and hyphens
+      .replace(/--+/g, '-')    // Replace multiple hyphens with single hyphen
+
+  }
+
+  const formatTags = (text: string) => {
+    return text
+      .split(',') //
+      .map(tag => tag.trim()) //
+      .filter(Boolean)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -84,8 +100,11 @@ export default function CreatePostPage() {
         <Input
           type="text"
           value={post.slug}
-          onChange={(e) => setPost(prev => ({ ...prev, slug: e.target.value }))}
-          placeholder="URL Slug"
+          onChange={(e) => setPost(prev => ({ 
+            ...prev, 
+            slug: formatSlug(e.target.value)
+          }))}
+          placeholder="URL Slug (spaces will be converted to hyphens)"
           required
         />
 
@@ -97,33 +116,48 @@ export default function CreatePostPage() {
         />
 
         <RichTextEditor
-          content={post.body.content?.[0]?.content?.[0]?.value || ''}
-          onChange={(content) => setPost(prev => ({
-            ...prev,
-            body: {
-              nodeType: 'document',
-              data: {},
-              content: [{
-                nodeType: 'paragraph',
-                content: [{
-                  nodeType: 'text',
-                  value: content,
-                  data: {},
-                  marks: []
-                }]
-              }]
-            }
-          }))}
+          content={post.body.content || ''}
+          onChange={(htmlContent) => {
+            // Convert HTML to Contentful Rich Text format
+            setPost(prev => ({
+              ...prev,
+              body: {
+                nodeType: 'document',
+                data: {},
+                content: [
+                  {
+                    nodeType: 'paragraph',
+                    data: {},
+                    content: [
+                      {
+                        nodeType: 'text',
+                        marks: [],
+                        data: {},
+                        value: htmlContent,
+                      }
+                    ]
+                  }
+                ]
+              }
+            }))
+          }}
         />
 
         <Input
           type="text"
-          value={post.tags?.join(', ')}
-          onChange={(e) => setPost(prev => ({ 
-            ...prev, 
-            tags: e.target.value.split(',').map(tag => tag.trim()).filter(Boolean)
-          }))}
+          value={post.tags?.join(', ') || ''}
+          onChange={(e) => {
+            // Just update the input value directly
+            const inputValue = e.target.value;
+            const currentTags = inputValue.length > 0 ? inputValue.split(',').map(tag => tag.trim()) : [];
+            setPost(prev => ({ ...prev, tags: currentTags }));
+          }}
           placeholder="Tags (comma separated)"
+          onBlur={(e) => {
+            // Process tags only when the input loses focus
+            const tags = formatTags(e.target.value);
+            setPost(prev => ({ ...prev, tags }));
+          }}
         />
 
         <Button type="submit">Create Post</Button>

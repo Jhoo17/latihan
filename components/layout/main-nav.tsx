@@ -24,7 +24,8 @@ import {
   Newspaper,
   Mail,
   Brain,
-  ChevronDown
+  ChevronDown,
+  Info
 } from "lucide-react"
 
 export function MainNav() {
@@ -72,6 +73,11 @@ export function MainNav() {
           icon: FileText
         }
       ]
+    },
+    {
+      href: "/about",
+      label: "About",
+      icon: Info
     },
     {
       href: "/map",

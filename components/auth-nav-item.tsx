@@ -14,11 +14,26 @@ export function AuthNavItem() {
   }
 
   return (
-    <div>
+    <div className="flex items-center gap-4">
       {session ? (
-        <Button onClick={() => signOut()} variant="ghost">
-          Log out
-        </Button>
+        <>
+          <span className="text-sm text-muted-foreground">
+            Logged in as {session.user?.email}
+          </span>
+          {session.user?.role === "ADMIN" && (
+            <Link 
+              href="/admin"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary"
+              )}
+            >
+              Admin
+            </Link>
+          )}
+          <Button onClick={() => signOut()} variant="ghost">
+            Log out
+          </Button>
+        </>
       ) : (
         <Link 
           href="/login" 

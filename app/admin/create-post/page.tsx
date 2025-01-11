@@ -41,6 +41,51 @@ export default function CreatePostPage() {
       .filter(Boolean)
   }
 
+  const mapTipTapToContentful = (jsonContent: any) => {
+    const mapNodeType = (type: string) => {
+      const typeMap: { [key: string]: string } = {
+        'bulletList': 'unordered-list',
+        'orderedList': 'ordered-list',
+        'listItem': 'list-item',
+        'heading': 'heading-1',
+        'blockquote': 'blockquote',
+        'paragraph': 'paragraph'
+      }
+      return typeMap[type] || type
+    }
+
+    const processNode = (node: any): any => {
+      if (!node) return null
+
+      const newNode: any = {
+        nodeType: mapNodeType(node.type),
+        data: {},
+        content: []
+      }
+
+      if (node.content) {
+        newNode.content = node.content.map(processNode).filter(Boolean)
+      }
+
+      if (node.text) {
+        return {
+          nodeType: 'text',
+          value: node.text,
+          marks: node.marks || [],
+          data: {}
+        }
+      }
+
+      return newNode
+    }
+
+    return {
+      nodeType: 'document',
+      data: {},
+      content: jsonContent.content.map(processNode).filter(Boolean)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -117,28 +162,11 @@ export default function CreatePostPage() {
 
         <RichTextEditor
           content={post.body.content || ''}
-          onChange={(htmlContent) => {
-            // Convert HTML to Contentful Rich Text format
+          onChange={(jsonContent) => {
+            const contentfulFormat = mapTipTapToContentful(jsonContent)
             setPost(prev => ({
               ...prev,
-              body: {
-                nodeType: 'document',
-                data: {},
-                content: [
-                  {
-                    nodeType: 'paragraph',
-                    data: {},
-                    content: [
-                      {
-                        nodeType: 'text',
-                        marks: [],
-                        data: {},
-                        value: htmlContent,
-                      }
-                    ]
-                  }
-                ]
-              }
+              body: contentfulFormat
             }))
           }}
         />

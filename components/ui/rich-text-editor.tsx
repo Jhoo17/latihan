@@ -19,7 +19,7 @@ import {
 
 interface RichTextEditorProps {
   content: string
-  onChange: (content: string) => void
+  onChange: (content: any) => void
 }
 
 export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
@@ -37,7 +37,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.getJSON())
     },
     editorProps: {
       attributes: {

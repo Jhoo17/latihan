@@ -47,6 +47,7 @@ model User {
   role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
+  socialPosts   SocialMediaPost[]
 }
 
 model VerificationToken {
@@ -61,4 +62,37 @@ enum Role {
   USER
   GDA_USER
   ADMIN
+}
+
+model SocialMediaPost {
+  id          String   @id @default(cuid())
+  platform    Platform
+  content     String   @db.Text
+  imageUrl    String?
+  postUrl     String?
+  status      PostStatus @default(DRAFT)
+  scheduledAt DateTime?
+  postedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  contentfulPostId String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@index([contentfulPostId])
+  @@index([userId])
+}
+
+enum Platform {
+  TWITTER
+  LINKEDIN
+  FACEBOOK
+  INSTAGRAM
+}
+
+enum PostStatus {
+  DRAFT
+  SCHEDULED
+  POSTED
+  FAILED
 } 

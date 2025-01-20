@@ -5,6 +5,8 @@ import { client, getEntry, Post, PostFields } from "@/lib/contentful"
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { Document } from '@contentful/rich-text-types'
 import { Entry } from "contentful"
+import { auth } from "@/auth"
+import { SocialMediaGenerator } from "@/components/blog/social-media-generator"
 
 export async function generateStaticParams() {
   const response = await client.getEntries<Post>({
@@ -17,6 +19,7 @@ export async function generateStaticParams() {
 }
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
+  const session = await auth()
   const entry = await getEntry<Post>(params.slug)
 
   if (!entry?.fields) {
@@ -98,13 +101,18 @@ export default async function PostPage({ params }: { params: { slug: string } })
             'blockquote': (node, children) => (
               <blockquote className="border-l-4 border-gray-300 pl-4 italic my-4">{children}</blockquote>
             ),
-            'embedded-asset-block': (node) => (
-              <img
-                src={node.data?.target?.fields?.file?.url}
-                alt={node.data?.target?.fields?.description || ''}
-                className="my-8 rounded-lg shadow-lg max-w-full h-auto"
-              />
-            ),
+            'embedded-asset-block': (node) => {
+              const asset = node.data.target
+              if (!asset) return null
+
+              return (
+                <img
+                  src={`https:${asset.fields.file.url}`}
+                  alt={asset.fields.description || ''}
+                  className="my-8 rounded-lg shadow-lg max-w-full h-auto"
+                />
+              )
+            },
             hyperlink: (node, children) => (
               <a href={node.data.uri} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
                 {children}
@@ -119,6 +127,12 @@ export default async function PostPage({ params }: { params: { slug: string } })
           },
         })}
       </div>
+
+      {session?.user?.role === "ADMIN" && (
+        <div className="mt-12">
+          <SocialMediaGenerator postSlug={params.slug} />
+        </div>
+      )}
     </div>
   )
 }

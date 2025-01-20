@@ -4,25 +4,36 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
-import { Button } from './button'
 import { 
   Bold, 
   Italic, 
-  List, 
-  ListOrdered, 
-  Quote, 
-  Undo, 
-  Redo, 
-  Link as LinkIcon,
   ImagePlus 
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger 
+} from '@/components/ui/popover'
+import { useEffect, useState } from 'react'
 
 interface RichTextEditorProps {
-  content: string
-  onChange: (content: any) => void
+  content: any;
+  onChange: (content: any) => void;
+  uploadedMedia?: Array<{
+    id: string;
+    url: string;
+    title: string;
+  }>;
 }
 
-export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
+export function RichTextEditor({ content, onChange, uploadedMedia = [] }: RichTextEditorProps) {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -30,7 +41,11 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
           depth: 10,
         },
       }),
-      Image,
+      Image.configure({
+        HTMLAttributes: {
+          class: 'rounded-lg max-w-full h-auto my-4',
+        },
+      }),
       Link.configure({
         openOnClick: false,
       }),
@@ -43,118 +58,77 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
       attributes: {
         class: 'prose max-w-none p-4 focus:outline-none'
       }
-    },
-    // Fix SSR warning
-    editable: true,
-    injectCSS: true,
-    immediatelyRender: false
+    }
   })
+
+  if (!isMounted) {
+    return <div className="border rounded-lg p-4 min-h-[200px]">Loading editor...</div>
+  }
 
   if (!editor) return null
 
-  // Prevent event bubbling for editor buttons
-  const handleButtonClick = (callback: () => void) => (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    callback()
-  }
-
-  const addImage = () => {
-    const url = window.prompt('Enter image URL')
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run()
-    }
-  }
-
-  const setLink = () => {
-    const url = window.prompt('Enter URL')
-    if (url) {
-      editor.chain().focus().setLink({ href: url }).run()
-    }
+  const insertMedia = (mediaId: string, url: string) => {
+    editor
+      .chain()
+      .focus()
+      .setImage({ 
+        src: url,
+        'data-asset-id': mediaId 
+      })
+      .run()
   }
 
   return (
-    <div className="border rounded-lg" onClick={(e) => e.stopPropagation()}>
-      <div className="border-b p-2 flex flex-wrap gap-2">
+    <div className="border rounded-lg">
+      <div className="border-b p-2 flex gap-2 flex-wrap">
         <Button
-          type="button"
           variant="ghost"
           size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().toggleBold().run())}
-          data-active={editor.isActive('bold')}
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? 'bg-slate-200' : ''}
         >
           <Bold className="h-4 w-4" />
         </Button>
         <Button
-          type="button"
           variant="ghost"
           size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().toggleItalic().run())}
-          data-active={editor.isActive('italic')}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={editor.isActive('italic') ? 'bg-slate-200' : ''}
         >
           <Italic className="h-4 w-4" />
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().toggleBulletList().run())}
-          data-active={editor.isActive('bulletList')}
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().toggleOrderedList().run())}
-          data-active={editor.isActive('orderedList')}
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().toggleBlockquote().run())}
-          data-active={editor.isActive('blockquote')}
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(setLink)}
-          data-active={editor.isActive('link')}
-        >
-          <LinkIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(addImage)}
-        >
-          <ImagePlus className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().undo().run())}
-        >
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={handleButtonClick(() => editor.chain().focus().redo().run())}
-        >
-          <Redo className="h-4 w-4" />
-        </Button>
+
+        {uploadedMedia.length > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <ImagePlus className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="grid grid-cols-2 gap-2 p-2">
+                {uploadedMedia.map((media) => (
+                  <div 
+                    key={media.id} 
+                    className="relative group cursor-pointer"
+                    onClick={() => insertMedia(media.id, media.url)}
+                  >
+                    <img
+                      src={media.url}
+                      alt={media.title}
+                      className="w-full h-24 object-cover rounded"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-sm">Insert</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
+      
       <EditorContent editor={editor} />
     </div>
   )

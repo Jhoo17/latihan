@@ -1,0 +1,14 @@
+{
+    "window.commandCenter": 1,
+    "terminal.integrated.defaultProfile.osx": "",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.profiles.windows": {
+        "Git Bash": {
+            "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+            "icon": "terminal-bash"
+        }
+    },
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "terminal.integrated.enabled": true,
+    "terminal.integrated.showOnStartup": true
+}

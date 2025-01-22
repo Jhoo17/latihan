@@ -1,0 +1,26 @@
+app/
+  ├── (marketing)/           # Group related routes
+  │   ├── blog/
+  │   ├── contact/
+  │   ├── map/
+  │   ├── publications/
+  │   └── services/
+  ├── admin/                 # Admin section
+  │   └── create-post/
+  ├── api/                   # API routes
+  │   ├── generate-social-content/
+  │   └── social-posts/
+  ├── layout.tsx            # Root layout
+  └── page.tsx              # Home page
+components/
+  ├── layout/               # Layout components
+  │   ├── main-nav.tsx
+  │   └── site-header.tsx
+  ├── maps/                 # Map related components
+  │   └── cesium-map.tsx
+  ├── ui/                   # Reusable UI components
+  │   └── [shadcn components]
+  └── date-picker-with-range.tsx
+lib/
+  └── utils.ts              # Utility functions
+

@@ -1,138 +1,117 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { client, getEntry, Post, PostFields } from "@/lib/contentful"
+import { getEntry, getEntries, Post } from "@/lib/contentful"
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import { Document } from '@contentful/rich-text-types'
-import { Entry } from "contentful"
-import { auth } from "@/auth"
-import { SocialMediaGenerator } from "@/components/blog/social-media-generator"
+import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from "@/components/ui/button"
+import { Entry } from 'contentful'
 
 export async function generateStaticParams() {
-  const response = await client.getEntries<Post>({
-    content_type: 'blogPage-3',
-  })
-
-  return response.items.map((post) => ({
-    slug: post.fields.slug || post.sys.id,
-  }))
+  try {
+    const posts = await getEntries()
+    return posts.map((post: Entry<Post>) => ({
+      slug: post.fields.slug,
+    }))
+  } catch (error) {
+    console.error('Error fetching entries:', error)
+    return []
+  }
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const session = await auth()
-  const entry = await getEntry<Post>(params.slug)
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getEntry(params.slug) as Entry<Post> | null
 
-  if (!entry?.fields) {
+  if (!post) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Link href="/blog">
-          <Button variant="outline" className="mb-4">← Back to Blog & Publications</Button>
+          <Button 
+            variant="ghost" 
+            className="mb-4 group flex items-center gap-2 hover:bg-blue-400 hover:text-white dark:hover:bg-blue-500 transition-all duration-300 ease-in-out"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              className="group-hover:-translate-x-1 transition-transform duration-300"
+            >
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog & Publications
+          </Button>
         </Link>
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
-          <p className="text-muted-foreground">The post you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-600">The post you're looking for doesn't exist or has been removed.</p>
         </div>
       </div>
     )
   }
 
-  const post = entry as Entry<Post>
-  const fields = post.fields as PostFields
+  const { fields } = post
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <Link href="/blog">
-          <Button variant="outline" className="mb-6">← Back to Blog & Publications</Button>
-        </Link>
-        
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="text-4xl font-bold">{fields.title}</h1>
-          <Badge variant={fields.publicationOrBlog ? 'default' : 'outline'}>
-            {fields.publicationOrBlog ? 'Publication' : 'Blog'}
-          </Badge>
-        </div>
-
-        {fields.tags && fields.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {fields.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
+    <div className="container mx-auto px-4 py-8">
+      <Link href="/blog">
+        <Button 
+          variant="ghost" 
+          className="mb-4 group flex items-center gap-2 hover:bg-blue-400 hover:text-white dark:hover:bg-blue-500 transition-all duration-300 ease-in-out"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            className="group-hover:-translate-x-1 transition-transform duration-300"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Back to Blog & Publications
+        </Button>
+      </Link>
+      
+      <article className="prose lg:prose-xl mx-auto">
+        {/* Featured Image */}
+        {fields.featuredImage?.fields?.file?.url && (
+          <div className="relative w-full h-[400px] mb-8 rounded-lg overflow-hidden">
+            <Image
+              src={`https:${fields.featuredImage.fields.file.url}`}
+              alt={fields.title || 'Blog post image'}
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
         )}
 
-        <p className="text-muted-foreground mb-8">
-          Published on: {new Date(fields.date).toLocaleDateString()}
-        </p>
-
-        {fields.excerpt && (
-          <p className="text-lg text-muted-foreground mb-8 border-l-4 border-muted pl-4">
-            {fields.excerpt}
-          </p>
+        <h1 className="text-4xl font-bold mb-4">{fields.title}</h1>
+        
+        {fields.description && (
+          <p className="text-xl text-gray-600 mb-8">{fields.description}</p>
         )}
-      </div>
-
-      <div className="prose prose-slate max-w-none">
-        {documentToReactComponents(fields.body, {
-          renderNode: {
-            paragraph: (node, children) => (
-              <p className="mb-4 leading-relaxed">{children}</p>
-            ),
-            'heading-1': (node, children) => (
-              <h1 className="text-3xl font-bold mt-8 mb-4">{children}</h1>
-            ),
-            'heading-2': (node, children) => (
-              <h2 className="text-2xl font-bold mt-6 mb-3">{children}</h2>
-            ),
-            'heading-3': (node, children) => (
-              <h3 className="text-xl font-bold mt-5 mb-2">{children}</h3>
-            ),
-            'unordered-list': (node, children) => (
-              <ul className="list-disc pl-6 mb-4">{children}</ul>
-            ),
-            'ordered-list': (node, children) => (
-              <ol className="list-decimal pl-6 mb-4">{children}</ol>
-            ),
-            'list-item': (node, children) => (
-              <li className="mb-1">{children}</li>
-            ),
-            'blockquote': (node, children) => (
-              <blockquote className="border-l-4 border-gray-300 pl-4 italic my-4">{children}</blockquote>
-            ),
-            'embedded-asset-block': (node) => {
-              const asset = node.data.target
-              if (!asset) return null
-
-              return (
-                <img
-                  src={`https:${asset.fields.file.url}`}
-                  alt={asset.fields.description || ''}
-                  className="my-8 rounded-lg shadow-lg max-w-full h-auto"
-                />
-              )
-            },
-            hyperlink: (node, children) => (
-              <a href={node.data.uri} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-                {children}
-              </a>
-            ),
-          },
-          renderMark: {
-            bold: (text) => <strong className="font-bold">{text}</strong>,
-            italic: (text) => <em className="italic">{text}</em>,
-            underline: (text) => <u>{text}</u>,
-            code: (text) => <code className="bg-gray-100 rounded px-1 py-0.5">{text}</code>,
-          },
-        })}
-      </div>
-
-      {session?.user?.role === "ADMIN" && (
-        <div className="mt-12">
-          <SocialMediaGenerator postSlug={params.slug} />
+        
+        <div className="mb-8 text-gray-600">
+          {new Date(post.sys.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
         </div>
-      )}
+        
+        <div className="rich-text prose">
+          {documentToReactComponents(fields.content)}
+        </div>
+      </article>
     </div>
   )
 }

@@ -43,9 +43,9 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-2">Visit Us</h3>
                   <p className="text-sm text-gray-600">
-                    123 Earth Science Blvd<br />
-                    Geology City, GC 12345<br />
-                    United States
+                    Mayapada Tower 1, 7th Floor <br />
+                    Jl. Jend. Sudirman Kav. 28,
+                    Jakarta Selatan 12920<br />
                   </p>
                 </div>
               </div>
@@ -59,10 +59,10 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-2">Call Us</h3>
                   <p className="text-sm text-gray-600">
-                    Main: +1 (123) 456-7890<br />
-                    Fax: +1 (123) 456-7891
+                    Phone: +6221 5212189 <br />
+                    Mobile: +62815-2031-6899
                   </p>
-                </div>
+                </div>  
               </div>
             </CardContent>
           </Card>
@@ -74,8 +74,8 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-2">Email Us</h3>
                   <p className="text-sm text-gray-600">
-                    info@gdaconsulting.com<br />
-                    support@gdaconsulting.com
+                    gda@gda.co.id  <br />
+                    achmad@gda.co.id
                   </p>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export default function ContactPage() {
             <h2 className="text-2xl font-semibold mb-6">Our Location</h2>
             <div className="aspect-square w-full bg-gray-100 rounded-lg relative overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.305935303!2d-74.25986548248684!3d40.69714941932609!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1667824789570!5m2!1sen!2s"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.3777706168607!2d106.81750837604949!3d-6.213807893774094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f401bd149845%3A0xfab22c8daef828ee!2sMayapada%20Tower%2C%20Jl.%20Jenderal%20Sudirman%20No.Kav.28%2C%20RT.4%2FRW.2%2C%20Kuningan%2C%20Karet%2C%20Kecamatan%20Setiabudi%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta%2012920!5e0!3m2!1sid!2sid!4v1737447481851!5m2!1sid!2sid"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

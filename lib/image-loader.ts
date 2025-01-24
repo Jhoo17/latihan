@@ -1,6 +1,8 @@
-'use client'
+import type { ImageLoader } from 'next/image'
 
-/** @type {import('next/image').ImageLoader} */
-export default function imageLoader({ src, width, quality }) {
+export default function imageLoader({ src, width, quality }: { src: string, width: number, quality?: number }) {
+  if (src.startsWith('https://s-jc.microlink.io')) {
+    return src
+  }
   return `${src}?w=${width}&q=${quality || 75}`
 } 

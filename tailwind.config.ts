@@ -55,6 +55,25 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		keyframes: {
+  			marquee: {
+  				'0%': { transform: 'translateX(0%)' },
+  				'100%': { transform: 'translateX(-50%)' },
+  			},
+  			'marquee-left': {
+  				'0%': { transform: 'translateX(0%)' },
+  				'100%': { transform: 'translateX(-50%)' }
+  			},
+  			'marquee-right': {
+  				'0%': { transform: 'translateX(-50%)' },
+  				'100%': { transform: 'translateX(0%)' }
+  			}
+  		},
+  		animation: {
+  			marquee: 'marquee 30s linear infinite',
+  			'marquee-left': 'marquee-left 30s linear infinite',
+  			'marquee-right': 'marquee-right 30s linear infinite'
   		}
   	}
   },

@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     const space = await client.getSpace(process.env.CONTENTFUL_SPACE_ID!)
     const environment = await space.getEnvironment('master')
     
-    // Convert Quill content to Contentful Rich Text
-    const contentDocument = {
+    // Create rich text content structure
+    const richTextContent = {
       nodeType: 'document',
       data: {},
       content: [
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
           content: [
             {
               nodeType: 'text',
-              value: content || '',
+              value: content,
               marks: [],
               data: {}
             }
@@ -78,13 +78,13 @@ export async function POST(request: Request) {
           'en-US': excerpt || ''
         },
         content: {
-          'en-US': contentDocument
+          'en-US': richTextContent
         }
       }
     }
 
     if (tags) {
-      entryData.fields.tags = {
+      entryData.fields['tags'] = {
         'en-US': tags.split(',').map(tag => tag.trim())
       }
     }
@@ -94,10 +94,10 @@ export async function POST(request: Request) {
     const entry = await environment.createEntry('JooBlog', entryData)
     console.log('Entry created with ID:', entry.sys.id)
 
-    // Handle featured image upload if provided
+    // Handle file upload if provided
     if (file) {
       try {
-        console.log('Uploading featured image:', file.name)
+        console.log('Uploading file:', file.name)
         const buffer = Buffer.from(await file.arrayBuffer())
         
         const asset = await environment.createAsset({
@@ -142,49 +142,74 @@ export async function POST(request: Request) {
       }
     }
 
-    // Process inline images from Quill content
-    const inlineImages = extractBase64ImagesFromQuill(content)
-    if (inlineImages.length > 0) {
-      console.log(`Found ${inlineImages.length} inline images`)
-      
-      for (const [index, imageData] of inlineImages.entries()) {
-        try {
-          const buffer = Buffer.from(imageData.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-          
-          const asset = await environment.createAsset({
-            fields: {
-              title: {
-                'en-US': `${title} - Inline Image ${index + 1}`
-              },
-              description: {
-                'en-US': `Inline image ${index + 1} for ${title}`
-              },
-              file: {
-                'en-US': {
-                  contentType: 'image/jpeg',
-                  fileName: `inline-image-${index + 1}.jpg`,
-                  upload: buffer.toString('base64')
+    // Process content for embedded images
+    if (content) {
+      try {
+        // Find all image URLs in content
+        const imgRegex = /<img[^>]+src="([^">]+)"/g
+        let match
+        const imagePromises = []
+        
+        while ((match = imgRegex.exec(content)) !== null) {
+          const imageUrl = match[1]
+          if (imageUrl.startsWith('data:image')) {
+            // Create asset from base64 image
+            const base64Data = imageUrl.split(',')[1]
+            const mimeType = imageUrl.split(';')[0].split(':')[1]
+            const extension = mimeType.split('/')[1]
+            
+            const asset = await environment.createAsset({
+              fields: {
+                title: {
+                  'en-US': `Embedded Image - ${new Date().toISOString()}`
+                },
+                description: {
+                  'en-US': 'Embedded image in blog post content'
+                },
+                file: {
+                  'en-US': {
+                    contentType: mimeType,
+                    fileName: `embedded-image-${Date.now()}.${extension}`,
+                    upload: base64Data
+                  }
                 }
               }
-            }
-          })
+            })
 
-          await asset.processForAllLocales()
-          const publishedAsset = await asset.publish()
-          
-          // Replace base64 image in content with Contentful asset URL
-          const assetUrl = `https:${publishedAsset.fields.file['en-US'].url}`
-          content = content.replace(imageData, assetUrl)
-        } catch (error) {
-          console.error(`Error uploading inline image ${index + 1}:`, error)
+            await asset.processForAllLocales()
+            const publishedAsset = await asset.publish()
+            
+            // Replace base64 image with Contentful URL
+            const contentfulUrl = `https:${publishedAsset.fields.file['en-US'].url}`
+            content = content.replace(imageUrl, contentfulUrl)
+          }
         }
-      }
 
-      // Update entry with processed content
-      entry.fields.content = {
-        'en-US': content
+        // Update entry with processed content
+        entry.fields.content['en-US'] = {
+          nodeType: 'document',
+          data: {},
+          content: [
+            {
+              nodeType: 'paragraph',
+              data: {},
+              content: [
+                {
+                  nodeType: 'text',
+                  value: content,
+                  marks: [],
+                  data: {}
+                }
+              ]
+            }
+          ]
+        }
+
+        await entry.update()
+        console.log('Entry updated with processed content')
+      } catch (error) {
+        console.error('Error processing embedded images:', error)
       }
-      await entry.update()
     }
 
     // Publish entry if requested
@@ -222,10 +247,4 @@ export async function POST(request: Request) {
       { status: 500 }
     )
   }
-}
-
-// Helper function to extract base64 images from Quill content
-function extractBase64ImagesFromQuill(content: string): string[] {
-  const base64Regex = /data:image\/[^;]+;base64,[^"]+/g
-  return content.match(base64Regex) || []
 } 

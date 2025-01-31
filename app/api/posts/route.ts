@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { managementClient } from '@/lib/contentful'
+import { managementClient, getEntries } from '@/lib/contentful'
 
 export async function POST(request: Request) {
   try {
@@ -85,14 +85,12 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const response = await client.getEntries({
-      content_type: 'blogPage-3',
+    const posts = await getEntries({
       order: ['-sys.createdAt'],
-      limit: 10,
-      include: 2  // Include linked assets (images)
+      limit: 10
     })
     
-    return NextResponse.json(response.items)
+    return NextResponse.json(posts)
   } catch (error) {
     console.error('Error fetching posts:', error)
     return NextResponse.json(

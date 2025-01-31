@@ -1,0 +1,16 @@
+0000000000000000000000000000000000000000 f3e79440ec02ba7ba1fb44655c763d97c86c767a unknown <PC@GDA-Geoscience.(none)> 1737360571 +0700	clone: from https://github.com/ibangj/gda-web-app.git
+f3e79440ec02ba7ba1fb44655c763d97c86c767a 50f6ab2b3a96f74e5e6569e84b1b253854efe9b2 Jhosua <jhosuamataputun@gmail.com> 1737524365 +0700	commit: Remove sensitive files
+50f6ab2b3a96f74e5e6569e84b1b253854efe9b2 f3e79440ec02ba7ba1fb44655c763d97c86c767a Jhosua <jhosuamataputun@gmail.com> 1737526741 +0700	reset: moving to HEAD~1
+f3e79440ec02ba7ba1fb44655c763d97c86c767a f3e79440ec02ba7ba1fb44655c763d97c86c767a Jhosua <jhosuamataputun@gmail.com> 1737530158 +0700	checkout: moving from main to fitur_joo
+f3e79440ec02ba7ba1fb44655c763d97c86c767a 46498467e7811607c18afebd491914fa97661127 Jhosua <jhosuamataputun@gmail.com> 1737530222 +0700	commit: new branch, jhos
+46498467e7811607c18afebd491914fa97661127 e93d4a067018c579585b930ee3b6010b88e75d7d Jhosua <jhosuamataputun@gmail.com> 1737530421 +0700	commit: remove sensitive info
+e93d4a067018c579585b930ee3b6010b88e75d7d e93d4a067018c579585b930ee3b6010b88e75d7d Jhosua <jhosuamataputun@gmail.com> 1737530518 +0700	checkout: moving from fitur_joo to clean-branch
+e93d4a067018c579585b930ee3b6010b88e75d7d f3e79440ec02ba7ba1fb44655c763d97c86c767a Jhosua <jhosuamataputun@gmail.com> 1737530528 +0700	reset: moving to HEAD~2
+f3e79440ec02ba7ba1fb44655c763d97c86c767a 103aa99edfcf8ff358f3418cf3d5a381be316169 Jhosua <jhosuamataputun@gmail.com> 1737530625 +0700	commit: remove sensitive info
+103aa99edfcf8ff358f3418cf3d5a381be316169 bc74b16a34a7d69a98a91f52487ee2555ff69224 Jhosua <jhosuamataputun@gmail.com> 1737685494 +0700	commit: V0.2.6 adding new feature : (Latest Insight) and fixing bugs at blog & publication tab
+bc74b16a34a7d69a98a91f52487ee2555ff69224 3acd98b1bcecaaab062f4d272a1b5275bd606c54 Jhosua <jhosuamataputun@gmail.com> 1737709433 +0700	commit: V0.2.6 Fix: Now we can add video in our content and Improve list styling and alignment in blog posts
+3acd98b1bcecaaab062f4d272a1b5275bd606c54 be4c72fcf8fdf6df037e643ee6833b9968ed0c00 Jhosua <jhosuamataputun@gmail.com> 1738304133 +0700	commit: takeover iban
+be4c72fcf8fdf6df037e643ee6833b9968ed0c00 93c04ee092aad2d01da34c378abbdaa900f0bcb9 Jhosua <jhosuamataputun@gmail.com> 1738304747 +0700	commit: changed env to envhide
+93c04ee092aad2d01da34c378abbdaa900f0bcb9 839f0abda9308e1d00b0acbc9c3143b7df465a24 Jhosua <jhosuamataputun@gmail.com> 1738305059 +0700	commit: first push to github repo
+839f0abda9308e1d00b0acbc9c3143b7df465a24 4d3ddacee2ba7def5380b04f9fa9ac32aae51235 Jhosua <jhosuamataputun@gmail.com> 1738306980 +0700	commit: now we can add post using admin page
+4d3ddacee2ba7def5380b04f9fa9ac32aae51235 11129d98755ee3bb673ce807957774a794f67fdc Jhosua <jhosuamataputun@gmail.com> 1738310305 +0700	commit: on progress admin page

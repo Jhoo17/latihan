@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { client } from '@/lib/contentful'
+import { getEntry } from '@/lib/contentful'
 import type { Post } from '@/lib/contentful'
 
 export async function GET(
@@ -7,20 +7,16 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const response = await client.getEntries<Post>({
-      content_type: 'blogPage-3',
-      'fields.slug': params.slug,
-      include: 2
-    })
+    const post = await getEntry(params.slug)
     
-    if (!response.items.length) {
+    if (!post) {
       return NextResponse.json(
         { error: 'Post not found' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json(response.items[0])
+    return NextResponse.json(post)
   } catch (error) {
     console.error('Error fetching post:', error)
     return NextResponse.json(

@@ -49,12 +49,13 @@ export default function AboutPage() {
           </div>
           <div>
             <Image
-              src="https://sjc.microlink.io/pLpccnqcfrx2K-92IgVAygyL69kPmEtMrTL9SftQl_nDNoYMFdbwo9HYXzCHhFvMLqqd4-zi1M-FNG_C6uR2HQ.jpeg"
+              src="https://s-jc.microlink.io/pLpccnqcfrx2K-92IgVAygyL69kPmEtMrTL9SftQl_nDNoYMFdbwo9HYXzCHhFvMLqqd4-zi1M-FNG_C6uR2HQ.jpeg"
               alt="Dr. Andang Bachtiar - Geologist Merdeka"
               width={600}
               height={400}
               className="rounded-lg shadow-lg object-cover w-full h-[400px]"
               priority
+              unoptimized
             />
           </div>
         </div>

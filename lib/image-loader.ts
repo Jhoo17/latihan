@@ -1,12 +1,8 @@
 import type { ImageLoader } from 'next/image'
 
-const imageLoader: ImageLoader = ({ src, width, quality }) => {
-  // Untuk gambar lokal, kembalikan path apa adanya
-  if (src.startsWith('/')) {
+export default function imageLoader({ src, width, quality }: { src: string, width: number, quality?: number }) {
+  if (src.startsWith('https://s-jc.microlink.io')) {
     return src
   }
-  // Untuk gambar eksternal, tambahkan parameter
-  return src
-}
-
-export default imageLoader 
+  return `${src}?w=${width}&q=${quality || 75}`
+} 

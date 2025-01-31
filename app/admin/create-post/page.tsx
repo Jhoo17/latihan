@@ -8,13 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { PostFields } from '@/lib/contentful'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
-import { redirect, useRouter } from 'next/navigation'
-import { auth } from '@/auth'
-import { createClient } from 'contentful-management'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import 'react-quill/dist/quill.snow.css'
 
@@ -24,6 +18,7 @@ export default function CreatePostPage() {
   const router = useRouter()
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const quillRef = useRef<any>(null)
 
   useEffect(() => {
@@ -40,11 +35,14 @@ export default function CreatePostPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (isSubmitting) return
+
+    setIsSubmitting(true)
     const formData = new FormData(event.currentTarget)
     
     try {
       // Convert file to base64 if exists
-      const imageFile = formData.get('image') as File
+      const imageFile = formData.get('featuredImage') as File
       let imageBase64 = ''
       
       if (imageFile?.size > 0) {
@@ -55,17 +53,21 @@ export default function CreatePostPage() {
         })
       }
 
-      // Add content from Quill editor
-      formData.set('content', content)
-      
-      // Add image as base64
-      if (imageBase64) {
-        formData.set('imageBase64', imageBase64)
+      const postData = {
+        title: formData.get('title'),
+        slug: formData.get('slug'),
+        description: formData.get('description'),
+        content: content, // Rich text content
+        featuredImage: imageBase64 || null,
+        tags: formData.get('tags')?.toString().split(',').map(tag => tag.trim()) || []
       }
 
       const response = await fetch('/api/posts/create', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData)
       })
 
       if (!response.ok) {
@@ -77,6 +79,8 @@ export default function CreatePostPage() {
     } catch (error) {
       console.error('Error creating post:', error)
       alert('Failed to create post. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -98,8 +102,9 @@ export default function CreatePostPage() {
         </div>
 
         <div className="space-y-4">
+          {/* Title */}
           <div>
-            <Label htmlFor="title">Post Title</Label>
+            <Label htmlFor="title">Title *</Label>
             <Input 
               id="title"
               name="title"
@@ -108,8 +113,9 @@ export default function CreatePostPage() {
             />
           </div>
 
+          {/* Slug */}
           <div>
-            <Label htmlFor="slug">URL Slug</Label>
+            <Label htmlFor="slug">URL Slug *</Label>
             <Input 
               id="slug"
               name="slug"
@@ -118,28 +124,31 @@ export default function CreatePostPage() {
             />
           </div>
 
+          {/* Description */}
           <div>
-            <Label htmlFor="excerpt">Post Excerpt</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea 
-              id="excerpt"
-              name="excerpt"
+              id="description"
+              name="description"
               placeholder="Brief description of the post"
               className="h-24"
             />
           </div>
 
+          {/* Featured Image */}
           <div>
-            <Label htmlFor="image">Featured Image</Label>
+            <Label htmlFor="featuredImage">Featured Image</Label>
             <Input 
-              id="image"
-              name="image"
+              id="featuredImage"
+              name="featuredImage"
               type="file"
               accept="image/*"
             />
           </div>
 
+          {/* Content */}
           <div>
-            <Label htmlFor="content">Content</Label>
+            <Label htmlFor="content">Content *</Label>
             <div className="prose max-w-none">
               <ReactQuill
                 theme="snow"
@@ -149,7 +158,7 @@ export default function CreatePostPage() {
                 modules={{
                   toolbar: [
                     [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
+                    ['bold', 'italic', 'underline'],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     ['link', 'image'],
                     ['clean']
@@ -159,6 +168,7 @@ export default function CreatePostPage() {
             </div>
           </div>
 
+          {/* Tags */}
           <div>
             <Label htmlFor="tags">Tags</Label>
             <Input 
@@ -169,8 +179,12 @@ export default function CreatePostPage() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
-          Create Post
+        <Button 
+          type="submit" 
+          className="w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Creating Post...' : 'Create Post'}
         </Button>
       </form>
     </div>

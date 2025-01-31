@@ -95,7 +95,7 @@ export default function CreatePostPage() {
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Publication</h2>
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
             <Switch name="publish" id="publish" />
             <Label htmlFor="publish">Publish immediately</Label>
           </div>
@@ -105,29 +105,29 @@ export default function CreatePostPage() {
           {/* Title */}
           <div>
             <Label htmlFor="title">Title *</Label>
-            <Input 
+        <Input
               id="title"
               name="title"
               placeholder="Enter post title"
-              required
-            />
+          required
+        />
           </div>
 
           {/* Slug */}
           <div>
             <Label htmlFor="slug">URL Slug *</Label>
-            <Input 
+        <Input
               id="slug"
               name="slug"
               placeholder="url-friendly-slug"
-              required
-            />
+          required
+        />
           </div>
 
           {/* Description */}
           <div>
             <Label htmlFor="description">Description</Label>
-            <Textarea 
+        <Textarea
               id="description"
               name="description"
               placeholder="Brief description of the post"
@@ -165,8 +165,8 @@ export default function CreatePostPage() {
                   ]
                 }}
               />
-            </div>
           </div>
+        </div>
 
           {/* Tags */}
           <div>
